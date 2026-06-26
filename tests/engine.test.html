@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Pruebas del motor clinico</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:24px;line-height:1.45}
+    .ok{color:#166534}.fail{color:#991b1b}
+    pre{background:#f1f5f9;padding:14px;border-radius:8px;overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>Pruebas del motor clinico</h1>
+  <div id="output"></div>
+  <script src="../assets/clinical-engine.js"></script>
+  <script>
+    const tests = [];
+    function test(name, fn){ tests.push({name, fn}); }
+    function assert(condition, message){ if(!condition) throw new Error(message); }
+
+    test("clasifica anemia ferropenica moderada", () => {
+      const r = AnemiaRiskEngine.calculate({eg:35,hb:7.8,vcm:74,rdw:17.5,ferritina:12,hierro:38,tibc:430,controles:3,adherencia:1});
+      assert(r.ok, "resultado no ok");
+      assert(r.severity.name === "Anemia moderada", "severidad incorrecta");
+      assert(r.probable.ferropenia, "ferropenia no detectada");
+      assert(r.calculated.tsat === 8.8, "TSAT calculada incorrecta");
+    });
+
+    test("eleva prioridad critica con Hb menor de 7", () => {
+      const r = AnemiaRiskEngine.calculate({eg:30,hb:6.8,vcm:86,controles:2,adherencia:2});
+      assert(r.risk.level === "critical", "no elevo a critica");
+      assert(r.alerts.length > 0, "sin alertas");
+    });
+
+    test("detecta hemolisis probable", () => {
+      const r = AnemiaRiskEngine.calculate({eg:20,hb:8.5,vcm:90,retic:4,ldh:420,bili:2.1,hapto:10,coombs:"pos"});
+      assert(r.probable.hemolisis, "hemolisis no detectada");
+      assert(r.risk.level === "critical", "riesgo no critico");
+    });
+
+    test("detecta deficiencia de hierro sin anemia", () => {
+      const r = AnemiaRiskEngine.calculate({eg:16,hb:11.2,vcm:84,ferritina:10});
+      assert(!r.severity.anemia, "clasifico anemia indebidamente");
+      assert(r.probable.deficienciaHierroSinAnemia, "no detecto reservas bajas");
+    });
+
+    const output = document.getElementById("output");
+    const results = tests.map((t) => {
+      try{ t.fn(); return {name:t.name, ok:true}; }
+      catch(error){ return {name:t.name, ok:false, error:error.message}; }
+    });
+    output.innerHTML = `<h2>${results.filter(r => r.ok).length}/${results.length} pruebas exitosas</h2>` +
+      results.map((r) => `<p class="${r.ok ? "ok" : "fail"}">${r.ok ? "OK" : "FALLO"} - ${r.name}${r.error ? ": " + r.error : ""}</p>`).join("") +
+      `<pre>${JSON.stringify(results, null, 2)}</pre>`;
+  </script>
+</body>
+</html>

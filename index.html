@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modelo operativo | Anemia materna y riesgo neonatal</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Sistema local de apoyo a la decision clinica</p>
+      <h1>Anemia materna y riesgo neonatal</h1>
+      <p class="lead">Clasificacion por trimestre, sospecha etiologica, priorizacion neonatal, historial local y exportacion para auditoria academica.</p>
+    </div>
+    <div class="status-panel">
+      <span id="storageStatus">Historial local activo</span>
+      <strong id="caseCount">0 casos</strong>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#captura">Captura</a>
+    <a href="#resultado">Resultado</a>
+    <a href="#historial">Historial</a>
+    <a href="#configuracion">Configuracion</a>
+    <a href="#referencias">Referencias</a>
+  </nav>
+
+  <main class="layout">
+    <section id="captura" class="panel capture-panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">Entrada clinica</p>
+          <h2>Formulario del caso</h2>
+        </div>
+        <button type="button" class="ghost" id="loadDemo">Cargar ejemplo</button>
+      </div>
+
+      <form id="caseForm">
+        <fieldset>
+          <legend>Identificacion y obstetricia</legend>
+          <div class="grid three">
+            <label>Identificador del caso
+              <input id="caseId" name="caseId" autocomplete="off" placeholder="Ej. ANM-001">
+            </label>
+            <label>Edad materna
+              <input type="number" name="edad" min="10" max="55" value="24">
+            </label>
+            <label>Edad gestacional actual (semanas)
+              <input type="number" name="eg" min="1" max="42" value="35" required>
+            </label>
+            <label>Controles prenatales
+              <input type="number" name="controles" min="0" max="30" value="3">
+            </label>
+            <label>Gestacion multiple
+              <select name="multiple"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Prematuridad previa
+              <select name="prematuro"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Bajo peso previo
+              <select name="bpn_prev"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Hipertension/preeclampsia
+              <select name="hta"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Diabetes
+              <select name="dm"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Infeccion/inflamacion activa
+              <select name="infeccion"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Sangrado actual
+              <select name="sangrado"><option value="0">No</option><option value="1">Si</option></select>
+            </label>
+            <label>Sintomas
+              <select name="sintomas">
+                <option value="0">Ausente o leve</option>
+                <option value="1">Fatiga, palidez, mareos o taquicardia leve</option>
+                <option value="2">Disnea, sincope, dolor toracico o compromiso hemodinamico</option>
+              </select>
+            </label>
+            <label>Adherencia a hierro/acido folico
+              <select name="adherencia">
+                <option value="2">No recibe o mala adherencia</option>
+                <option value="1" selected>Irregular</option>
+                <option value="0">Buena</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Hemograma</legend>
+          <div class="grid three">
+            <label>Hemoglobina Hb (g/dL)
+              <input type="number" name="hb" step="0.1" min="1" max="20" value="7.8" required>
+            </label>
+            <label>Hematocrito (%)
+              <input type="number" name="hto" step="0.1" min="5" max="60" value="25">
+            </label>
+            <label>VCM (fL)
+              <input type="number" name="vcm" step="0.1" min="40" max="140" value="74">
+            </label>
+            <label>HCM (pg)
+              <input type="number" name="hcm" step="0.1" min="10" max="45" value="23">
+            </label>
+            <label>CHCM (g/dL)
+              <input type="number" name="chcm" step="0.1" min="20" max="40" value="30">
+            </label>
+            <label>RDW (%)
+              <input type="number" name="rdw" step="0.1" min="5" max="35" value="17.5">
+            </label>
+            <label>Eritrocitos (millones/uL)
+              <input type="number" name="rbc" step="0.1" min="1" max="8" value="3.7">
+            </label>
+            <label>Plaquetas (x10^3/uL)
+              <input type="number" name="plaquetas" step="1" min="1" max="1000" value="260">
+            </label>
+            <label>Leucocitos (x10^3/uL)
+              <input type="number" name="leucos" step="0.1" min="1" max="50" value="8.8">
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Perfil ferrico, inflamacion y etiologia</legend>
+          <div class="grid three">
+            <label>Ferritina serica (ng/mL)
+              <input type="number" name="ferritina" step="0.1" min="0" max="2000" value="12">
+            </label>
+            <label>Hierro serico (ug/dL)
+              <input type="number" name="hierro" step="0.1" min="0" max="500" value="38">
+            </label>
+            <label>TIBC (ug/dL)
+              <input type="number" name="tibc" step="0.1" min="0" max="800" value="430">
+            </label>
+            <label>TSAT (%)
+              <input type="number" name="tsat" step="0.1" min="0" max="100" placeholder="Se calcula si esta vacio">
+            </label>
+            <label>PCR (mg/L)
+              <input type="number" name="pcr" step="0.1" min="0" max="300">
+            </label>
+            <label>Creatinina (mg/dL)
+              <input type="number" name="creatinina" step="0.01" min="0" max="20">
+            </label>
+            <label>Vitamina B12 (pg/mL)
+              <input type="number" name="b12" step="1" min="0" max="5000">
+            </label>
+            <label>Folato serico (ng/mL)
+              <input type="number" name="folato" step="0.1" min="0" max="50">
+            </label>
+            <label>Reticulocitos (%)
+              <input type="number" name="retic" step="0.1" min="0" max="30">
+            </label>
+            <label>LDH (U/L)
+              <input type="number" name="ldh" step="1" min="0" max="5000">
+            </label>
+            <label>Bilirrubina indirecta (mg/dL)
+              <input type="number" name="bili" step="0.1" min="0" max="30">
+            </label>
+            <label>Haptoglobina (mg/dL)
+              <input type="number" name="hapto" step="1" min="0" max="500">
+            </label>
+            <label>Coombs directo
+              <select name="coombs"><option value="">No disponible</option><option value="neg">Negativo</option><option value="pos">Positivo</option></select>
+            </label>
+            <label>Frotis periferico
+              <select name="frotis">
+                <option value="">No disponible</option>
+                <option value="normal">Sin hallazgos relevantes</option>
+                <option value="micro">Microcitosis/hipocromia</option>
+                <option value="macro">Macrocitosis</option>
+                <option value="hemolisis">Datos de hemolisis</option>
+                <option value="sickle">Celulas falciformes</option>
+              </select>
+            </label>
+            <label>HbA2 (%)
+              <input type="number" name="hba2" step="0.1" min="0" max="20">
+            </label>
+            <label>HbS u otra variante
+              <select name="hbs"><option value="">No disponible</option><option value="0">No detectada</option><option value="1">Detectada</option></select>
+            </label>
+            <label>Antecedente familiar
+              <select name="familia"><option value="0">No conocido</option><option value="1">Si</option></select>
+            </label>
+          </div>
+        </fieldset>
+
+        <label>Notas clinicas
+          <textarea name="notes" placeholder="Contexto, tratamiento previo, tolerancia, signos vitales u observaciones."></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="primary">Analizar caso</button>
+          <button type="button" id="saveCase" class="secondary">Guardar en historial</button>
+          <button type="reset" class="ghost">Limpiar</button>
+        </div>
+      </form>
+    </section>
+
+    <aside id="resultado" class="panel result-panel" aria-live="polite">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">Salida del modelo</p>
+          <h2>Resultado</h2>
+        </div>
+        <button type="button" class="ghost" id="printReport">PDF</button>
+      </div>
+      <div id="resultContent" class="empty-state">Complete los datos y presione Analizar caso.</div>
+    </aside>
+
+    <section id="historial" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">Persistencia local</p>
+          <h2>Historial de casos</h2>
+        </div>
+        <div class="button-row">
+          <button type="button" class="ghost" id="exportJson">JSON</button>
+          <button type="button" class="ghost" id="exportCsv">CSV</button>
+          <button type="button" class="danger-btn" id="clearHistory">Vaciar</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Fecha</th><th>Caso</th><th>Hb</th><th>EG</th><th>Clasificacion</th><th>Score</th><th>Riesgo</th><th>Accion</th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="configuracion" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">Puntos de corte</p>
+          <h2>Configuracion local del algoritmo</h2>
+        </div>
+        <button type="button" class="ghost" id="resetConfig">Restaurar</button>
+      </div>
+      <form id="configForm" class="grid five"></form>
+      <p class="fineprint">Los cambios se guardan en este navegador y se aplican a nuevos calculos. Cada exportacion conserva los datos del caso, pero la validacion clinica local sigue siendo indispensable.</p>
+    </section>
+
+    <section id="referencias" class="panel wide">
+      <p class="section-kicker">Alcance</p>
+      <h2>Referencias y uso responsable</h2>
+      <div class="split">
+        <div class="notice">
+          Este modelo es academico. No sustituye evaluacion medica, protocolos institucionales, guias nacionales ni criterio de obstetricia/hematologia.
+        </div>
+        <ul class="refs">
+          <li><a href="https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2021/08/anemia-in-pregnancy" target="_blank" rel="noopener">ACOG: Anemia in Pregnancy</a></li>
+          <li><a href="https://www.cdc.gov/mmwr/volumes/71/wr/mm7125a1.htm" target="_blank" rel="noopener">CDC/MMWR: anemia por trimestre</a></li>
+          <li><a href="https://obgyn.onlinelibrary.wiley.com/doi/full/10.1002/ijgo.70529" target="_blank" rel="noopener">FIGO: recomendaciones sobre anemia en embarazo</a></li>
+          <li><a href="https://www.who.int/data/nutrition/nlis/info/antenatal-iron-supplementation" target="_blank" rel="noopener">WHO: hierro y acido folico antenatal</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <template id="configField">
+    <label><span></span><input type="number" step="0.1"></label>
+  </template>
+
+  <script src="assets/clinical-engine.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
